@@ -54,6 +54,8 @@ describe('Manage local cluster objects', function () {
         var centroidName = data.centroidName;
         var centroid = new bigml.Centroid();
         centroid.create(clusterId, inputData, function (error, data) {
+            console.log(inputData);
+            console.log(clusterId);
             assert.equal(centroidName, data.object.centroid_name);
             assert.equal(firstCentroidDistance, data.object.distance);
             done();
@@ -71,6 +73,8 @@ describe('Manage local cluster objects', function () {
       secondCentroidDistance = prediction.distance;
       var centroid = new bigml.Centroid();
       centroid.create(clusterId, inputData, function (error, data) {
+          console.log(inputData);
+          console.log(clusterId);
           assert.equal(centroidName, data.object.centroid_name);
           assert.equal(secondCentroidDistance, data.object.distance);
           done();
@@ -87,6 +91,8 @@ describe('Manage local cluster objects', function () {
       thirdCentroidDistance = prediction.distance;
       var centroid = new bigml.Centroid();
       centroid.create(clusterId, inputData, function (error, data) {
+          console.log(inputData);
+          console.log(clusterId);
           assert.equal(centroidName, data.object.centroid_name);
           assert.equal(thirdCentroidDistance, data.object.distance);
           done();
@@ -99,6 +105,8 @@ describe('Manage local cluster objects', function () {
       var inputData = {'000000': 1, '000001': 1, '000002': 1,
                        '000003': 1, '000004': 'Iris-setosa'};
       localCluster.centroid(inputData, function (error, data) {
+        console.log(inputData);
+        console.log(localCluster.resourceId);
         assert.equal(data.centroidName, prediction1);
         assert.equal(data.distance, firstCentroidDistance);
         done();
@@ -111,6 +119,8 @@ describe('Manage local cluster objects', function () {
       var inputData = {'000000': 3, '000001': 3, '000002': 3,
                        '000003': 3, '000004': 'Iris-virginica'};
       var prediction = localCluster.centroid(inputData);
+      console.log(inputData);
+      console.log(localCluster.resourceId);
       assert.equal(prediction.centroidName, prediction2);
       assert.equal(prediction.distance, secondCentroidDistance);
     });
@@ -121,6 +131,8 @@ describe('Manage local cluster objects', function () {
       var inputData = {'000000': 3, '000001': 3, '000002': 3,
                        '000003': 3};
       var prediction = localCluster.centroid(inputData);
+      console.log(inputData);
+      console.log(localCluster.resourceId);
       assert.equal(prediction.centroidName, prediction2);
       assert.equal(prediction.distance, thirdCentroidDistance);
     });
@@ -143,6 +155,8 @@ describe('Manage local cluster objects', function () {
       var inputData = {'petal width': 1, 'petal length': 1, 'sepal length': 1,
                        'sepal width': 1, 'species': 'Iris-setosa'};
       localCluster.centroid(inputData, function (error, data) {
+        console.log(inputData);
+        console.log(localCluster.resourceId);
         assert.equal(data.centroidName, prediction1);
         done();
       });
@@ -159,11 +173,14 @@ describe('Manage local cluster objects', function () {
       var inputData = {'petal width': 1, 'petal length': 1, 'sepal length': 1,
                        'sepal width': 1, 'species': 'Iris-setosa'};
       localCluster.centroid(inputData, function (error, data) {
+        console.log(inputData);
+        console.log(localCluster.resourceId);
         assert.equal(data.centroidName, prediction1);
         done();
       });
     });
   });
+
   after(function (done) {
     source.delete(sourceId, function (error, data) {
       assert.equal(error, null);
@@ -176,10 +193,12 @@ describe('Manage local cluster objects', function () {
       done();
     });
   });
+/*
   after(function (done) {
     cluster.delete(clusterId, function (error, data) {
       assert.equal(error, null);
       done();
     });
   });
+*/
 });
