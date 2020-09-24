@@ -585,7 +585,61 @@ parameters used in the last REST call. They are available
 to be used if the call needs to be retried. For instance, if your internet
 connection falls for a while, the `create` call will be retried a limited number
 of times using this information unless you explicitely command it by using the
+`retry` argument in the third position set to `false`.
 
+BigML offers support to use images or collections of CSVs
+in your Machine Learning models.
+Uploading images to BigML is as easy as uploading any other file. Each
+file will be ingested and a new source will be created from it. To build
+Machine Learning models one typically needs lots of images and they are
+usually uploaded in batches stored in
+`.zip` or `.tar` files. BigML is able to ingest such a file and creates a
+`composite source` from it
+and for each file contained in the compressed file a
+`component source` will be created. Thus, a zip file containg two images
+can be uploaded to BigML by using the `create` method of the `Source`
+connection:
+
+```js
+    var bigml = require('bigml');
+    var source = new bigml.Source();
+    source.create('./data/images.zip', {name: 'my images'}, true,
+      function(error, sourceInfo) {
+          if (!error && sourceInfo) {
+            console.log(sourceInfo);
+          }
+      });
+```
+
+
+and that operation will create three sources: one per image plus the composite
+source that contains them.
+
+If you put together a bunch of image sources inside a composite,
+that composite will also have format "image". If you create a dataset
+from it, every row will correspond to one of the images in the composite,
+and have a column representing the image data, and another its filename.
+Also, BigML will extract around two hundred features per image by default,
+representing its gradients histogram, and you can choose several others or
+add labels to each image. Please, check the complete `API documentation about
+composite sources <https://bigml.com/api/sources#sr_composite_sources>`_ to
+learn how to create them, update their contents while they are `open`
+(editable) and `close` them so that you can create datasets and models
+from them. Closing a source makes it immutable, but any source
+can be cloned into a new source open to modification.
+
+
+```js
+    var bigml = require('bigml');
+    var source = new bigml.Source();
+    var closedSource = 'source/526fc344035d071ea3031d72';
+    source.clone(closedSource,
+      function(error, sourceInfo) {
+          if (!error && sourceInfo) {
+            console.log(sourceInfo);
+          }
+      });
+```
 
 For datasets to be created you need a source object or id, another dataset
 object or id, a list of dataset ids or a cluster id as first argument
@@ -653,8 +707,57 @@ method of ``Dataset`` objects.
 would generate a new dataset containing the subset of instances in the cluster
 associated to the centroid id ``000000``.
 
-Similarly to create models, ensembles, logistic regressions, deepnets and any modeling resource,
+
+As in the example given in the sources creation section,
+datasets can also be cloned using the `.clone` method available in the
+`bigml.Dataset` connection class.
+
+
+```js
+    var bigml = require('bigml');
+    var dataset = new bigml.Dataset();
+    var finishedDataset = 'dataset/526fc344035d071ea3031d72';
+    dataset.clone(finishedDataset,
+      function(error, datasetInfo) {
+          if (!error && datasetInfo) {
+            console.log(datasetInfo);
+          }
+      });
+```
+
+
+Similarly to create models, ensembles, logistic regressions,
+deepnets and any modeling resource,
 you will need a dataset as first argument.
+
+
+```js
+    var bigml = require('bigml');
+    var ensemble = new bigml.Ensemble();
+    var finishedgDataset = 'dataset/526fc344035d071ea3031d72';
+    ensemble.create(finishedDataset, {name: 'my ensemble'}, true,
+      function(error, ensembleInfo) {
+          if (!error && ensembleInfo) {
+            console.log(ensembleInfo);
+          }
+      });
+```
+
+And cloning is also available for models.
+
+
+```js
+    var bigml = require('bigml');
+    var deepnet = new bigml.Deepnet();
+    var finishedgDeepnet = 'deepnet/526fc344035d071ea3031d72';
+    deepnet.clone(finishedDeepnet,
+      function(error, deepnetInfo) {
+          if (!error && deepnetInfo) {
+            console.log(deepnetInfo);
+          }
+      });
+```
+
 
 Evaluations will need a model as first argument and a dataset as second one and
 predictions need a model as first argument too:
